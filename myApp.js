@@ -23,7 +23,12 @@ app.get("/", (req, res) => {
 
 // app.use is used to mount middleware functions at a specified path. Middleware functions are functions that have access to the request object (req), the response object (res), and the next middleware function in the application’s request-response cycle. Middleware functions can perform tasks such as parsing the request body, logging information, and handling errors.
 // The express.static middleware function is used to serve static files, such as images, CSS files, and JavaScript files, from a specified directory. The first argument to express.static is the path to the directory containing the static files. In this case, the public directory is specified as the directory containing the static files.
-app.use("/public", express.static(__dirname + "/public"));
+// app.use("/public", express.static(__dirname + "/public"));
+
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path} - ${req.ip}`);
+  next();
+});
 
 // res.json is used to send a JSON response back to the client. The argument to res.json is an object that will be converted to JSON format and sent as the response.
 app.get("/json", (req, res) => {
@@ -39,5 +44,34 @@ app.get("/json", (req, res) => {
     message: message,
   });
 });
+
+app.get("/now", (req, res, next) => {
+  req.time = new Date().toString();
+  next();
+}, (req, res) => {
+  res.json({
+    time: req.time,
+  });
+});
+
+// The route parameter is specified in the URL path using a colon followed by the parameter name. In this case, the parameter name is word.
+// The value of the route parameter can be accessed in the request object using req.params. The req.params object is an object containing properties mapped to the named route parameters.
+// The value of the word parameter is accessed using req.params.word.
+app.get("/:word/echo", (req, res) => {
+  res.json({
+    echo: req.params.word,
+  });
+});
+
+// The query parameters are specified in the URL after a question mark (?), with each parameter separated by an ampersand (&). Each parameter consists of a key-value pair, with the key and value separated by an equal sign (=).
+// The value of the query parameters can be accessed in the request object using req.query. The req.query object is an object containing properties mapped to the query parameters.
+// The value of the search query parameter is accessed using req.query.q.
+app.get("/name", (req, res) => {
+  let { first: firstName, last: lastName } = req.query;
+
+  res.json({
+    name: `${firstName} ${lastName}`,
+  });
+})
 
 module.exports = app;
