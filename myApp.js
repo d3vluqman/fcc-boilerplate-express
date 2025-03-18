@@ -83,4 +83,15 @@ app.get("/name", (req, res) => {
 // The bodyParser.urlencoded middleware function is used to parse URL-encoded form data. The extended option is set to false to use the querystring library instead of the qs library for parsing the form data.
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// The post method is used to define a route handler for POST requests to the /name path.
+// The req.body object contains the parsed form data from the request body. The value of the first and last form fields is accessed using req.body.first and req.body.last, respectively.
+// The response is sent back to the client as a JSON object with the name property set to the concatenated first and last names.
+app.post("/name", (req, res) => {
+  let { first: firstName, last: lastName } = req.body;
+
+  res.json({
+    name: `${firstName} ${lastName}`,
+  });
+});
+
 module.exports = app;
