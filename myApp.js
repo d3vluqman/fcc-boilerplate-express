@@ -1,5 +1,6 @@
 require("dotenv").config();
 let express = require("express");
+let bodyParser = require("body-parser");
 let app = express();
 
 // The app.get method is defining a route handler for GET requests to the root URL ("/").
@@ -45,14 +46,18 @@ app.get("/json", (req, res) => {
   });
 });
 
-app.get("/now", (req, res, next) => {
-  req.time = new Date().toString();
-  next();
-}, (req, res) => {
-  res.json({
-    time: req.time,
-  });
-});
+app.get(
+  "/now",
+  (req, res, next) => {
+    req.time = new Date().toString();
+    next();
+  },
+  (req, res) => {
+    res.json({
+      time: req.time,
+    });
+  }
+);
 
 // The route parameter is specified in the URL path using a colon followed by the parameter name. In this case, the parameter name is word.
 // The value of the route parameter can be accessed in the request object using req.params. The req.params object is an object containing properties mapped to the named route parameters.
@@ -72,6 +77,10 @@ app.get("/name", (req, res) => {
   res.json({
     name: `${firstName} ${lastName}`,
   });
-})
+});
+
+// The body-parser middleware is used to parse the request body and make it available in the req.body object. The body-parser middleware is added to the Express application using the app.use method.
+// The bodyParser.urlencoded middleware function is used to parse URL-encoded form data. The extended option is set to false to use the querystring library instead of the qs library for parsing the form data.
+app.use(bodyParser.urlencoded({ extended: false }));
 
 module.exports = app;
